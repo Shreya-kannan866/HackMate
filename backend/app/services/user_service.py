@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from app.repositories.user import UserRepository
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserLogin  # Added UserLogin import
 from app.models.user import User
 # We will use a library like passlib or bcrypt for password hashing
 from passlib.context import CryptContext
@@ -47,3 +47,26 @@ class UserService:
         new_user = UserRepository.create(db, user_data=user_data, hashed_password=hashed_pwd)
         
         return new_user
+
+    @staticmethod
+    def authenticate_user(db: Session, credentials: UserLogin) -> User:
+        """Verify username and password against the database."""
+        
+        # 1. Look up the user by their username
+        user = UserRepository.get_by_username(db, username=credentials.username)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid username or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        # 2. Check if the provided raw password matches the database hash
+        if not UserService.verify_password(credentials.password, user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid username or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        return user
