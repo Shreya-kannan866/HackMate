@@ -16,9 +16,11 @@ from app.database.session import engine
 # Add your model imports here as each track builds theirs, e.g.:
 # from app.models import user, opportunity, team, application, workspace, review, reputation
 from app.models import roadmap  # noqa: F401  (Track C)
+from app.models import user, reputation, notification
 
 # --- Import routers ---
 from app.routes import roadmaps
+from app.routes import auth, users, reputation, notifications  # Fixed: Imported from app.routes instead of app.dependencies
 
 app = FastAPI(title=settings.APP_NAME)
 
@@ -30,6 +32,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)          # Add this
+app.include_router(users.router)         # Add this
+app.include_router(reputation.router)    # Add this
+app.include_router(notifications.router) # Add this
 # Dev-only convenience: auto-creates tables from models on startup.
 # Once Alembic migrations are set up (shared task), replace this with
 # `alembic upgrade head` run as a separate step instead.

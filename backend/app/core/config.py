@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     # --- Database ---
     # Postgres, matching production (Render). Override via .env locally —
     # e.g. if you run Postgres in Docker: postgresql://postgres:Shre123@localhost:5432/Hackmate
-    DATABASE_URL: str = "postgresql://postgres:Shre123@localhost:5432/Hackmate"
+    DATABASE_URL: str = "postgresql://postgres:Rockon07@localhost:5432/HackMate"
 
     # --- Auth (placeholders until Person A's real Auth module lands) ---
     JWT_SECRET: str = "dev-only-secret-change-me"
